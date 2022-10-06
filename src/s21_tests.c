@@ -12,7 +12,7 @@ START_TEST(pow_test_1) {
       long double b = pow(k, g);
       if ((!s21_isnan(a) && !isnan(b)) && !(a == INFINITY && b == INFINITY) &&
           !(a == -INFINITY && b == -INFINITY))
-        ck_assert_double_eq_tol(a ,b, 1e-7);
+        ck_assert_double_eq_tol(a, b, 1e-7);
       a = s21_pow(g, k);
       b = pow(g, k);
       if ((!s21_isnan(a) && !isnan(b)) && !(a == INFINITY && b == INFINITY) &&
