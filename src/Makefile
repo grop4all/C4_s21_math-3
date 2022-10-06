@@ -1,8 +1,13 @@
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -g -std=c11
 LIBS = -lcheck
-CLIBS = -lsubunit -lrt -lpthread -lm
+CLIBS = -lm
 
-all: clean test
+ifeq ($(shell uname), Linux)
+	CLIBS=-lsubunit -lrt -lpthread -lm
+endif
+
+all: test
+
 
 s21_math.o: s21_math.c s21_math.h
 	gcc -c $(CFLAGS) s21_math.c
