@@ -1,7 +1,7 @@
 CFLAGS = -Wall -Wextra -Werror -g -std=c11
 LIBS = -lcheck
 CLIBS = -lm
-
+FLAGs = -Wall -Werror -Wextra -std=c11 -g
 ifeq ($(shell uname), Linux)
 	CLIBS=-lsubunit -lrt -lpthread -lm
 endif
@@ -10,30 +10,29 @@ all: test
 
 
 s21_math.o: s21_math.c s21_math.h
-	gcc -c $(CFLAGS) s21_math.c
+	@gcc $(FLAGs) -c s21_math.c 
 
 s21_math.a: s21_math.o
-	ar r s21_math.a s21*.o
-	ranlib s21_math.a
-	rm -rf *.o
+	@gcc -c s21_math.c
+	@ar rcs s21_math.a s21_math.o
 
 test: s21_math.a
 	gcc s21_tests.c -o check.out  ./s21_math.a $(LIBS) $(CLIBS)
 	./check.out
 
 clean:
-	rm -rf *.o *.a *.h.gch check.out
-	rm s21_tests.g*
-	rm *.out
-	rm *.info
-	rm -rf coverage
+	- rm -rf *.o *.a *.h.gch check.out s21_math.gcno gcov_test gcov_test.dSYM s21_math.gcda 
+	- rm s21_tests.g*
+	- rm *.info
+	- rm -rf coverage
 
 gcov_report : s21_math.a
-	gcc s21_tests.c -o gcov_rep_check.out ./s21_math.a $(LIBS) $(CLIBS) -fprofile-arcs -ftest-coverage
-	./gcov_rep_check.out
-	lcov -c -d . -o coverage.info
-	genhtml coverage.info -o coverage
-	open coverage/index.html
+	@gcc $(FLAGs) --coverage s21_tests.c s21_math.c  s21_math.a $(LIBS) $(CLIBS) -o gcov_test
+	@chmod +x *
+	@./gcov_test
+	@lcov -t "gcov_test" -o gcov_test.info --no-external -c -d .
+	@genhtml -o report/ gcov_test.info
+	- @open ./report/index.html
 
 
 lint:
@@ -42,4 +41,5 @@ lint:
 	clang-format -i *.c *.h
 	clang-format -i *.c *.h
 	rm .clang-format
+
 
